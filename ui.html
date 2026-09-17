@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+
+<style>
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background:
+    var(--figma-color-bg);
+
+  color:
+    var(--figma-color-text);
+}
+
+.header {
+  margin-bottom: 22px;
+}
+
+.title {
+  margin: 0;
+
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin:
+    7px 0 0;
+
+  font-size: 11px;
+  line-height: 1.5;
+
+  color:
+    var(--figma-color-text-secondary);
+}
+
+
+/* =========================================
+   FEATURES
+========================================= */
+
+.feature-box {
+  padding: 14px;
+
+  border:
+    1px solid
+    var(--figma-color-border);
+
+  border-radius: 10px;
+
+  background:
+    var(--figma-color-bg-secondary);
+}
+
+.feature {
+  display: flex;
+
+  gap: 10px;
+
+  padding:
+    7px 0;
+
+  font-size: 12px;
+}
+
+.icon {
+  width: 18px;
+
+  flex-shrink: 0;
+
+  text-align: center;
+}
+
+.feature-title {
+  font-weight: 600;
+}
+
+.feature-desc {
+  margin-top: 2px;
+
+  font-size: 10px;
+  line-height: 1.4;
+
+  color:
+    var(--figma-color-text-secondary);
+}
+
+
+/* =========================================
+   RESULT
+========================================= */
+
+#result {
+  margin-top: 15px;
+
+  min-height: 20px;
+
+  font-size: 11px;
+  line-height: 1.65;
+
+  color:
+    var(--figma-color-text-secondary);
+
+  white-space: pre-line;
+}
+
+#result.success {
+  color:
+    var(--figma-color-text-success);
+}
+
+#result.error {
+  color:
+    var(--figma-color-text-danger);
+}
+
+
+/* =========================================
+   BUTTON
+========================================= */
+
+button {
+  width: 100%;
+
+  margin-top: 18px;
+  padding: 11px 14px;
+
+  border: 0;
+  border-radius: 8px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+#runButton {
+  background:
+    var(--figma-color-bg-brand);
+
+  color:
+    var(--figma-color-text-onbrand);
+}
+
+#runButton:hover {
+  background:
+    var(--figma-color-bg-brand-hover);
+}
+
+#runButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+
+/* =========================================
+   NOTE
+========================================= */
+
+.note {
+  margin-top: 15px;
+
+  font-size: 10px;
+  line-height: 1.5;
+
+  color:
+    var(--figma-color-text-tertiary);
+}
+
+.note strong {
+  color:
+    var(--figma-color-text-secondary);
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="header">
+
+  <h1 class="title">
+    LID Safe Text Cleaner
+  </h1>
+
+  <p class="subtitle">
+    선택 영역의 Text Layer를 정리하고
+    폰트를 Inter로 통일합니다.
+  </p>
+
+</div>
+
+
+<div class="feature-box">
+
+  <div class="feature">
+
+    <div class="icon">
+      Aa
+    </div>
+
+    <div>
+
+      <div class="feature-title">
+        Font → Inter
+      </div>
+
+      <div class="feature-desc">
+        모든 Text Layer의 폰트를
+        Inter로 변경합니다.
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="feature">
+
+    <div class="icon">
+      —
+    </div>
+
+    <div>
+
+      <div class="feature-title">
+        Text Layer → "-"
+      </div>
+
+      <div class="feature-desc">
+        일반 Text Layer의 이름을
+        "-"로 정리합니다.
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="feature">
+
+    <div class="icon">
+      🔒
+    </div>
+
+    <div>
+
+      <div class="feature-title">
+        LID 보호
+      </div>
+
+      <div class="feature-desc">
+        LID가 입력된 Text Layer의 이름은
+        변경하지 않습니다.
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div id="result">
+  Frame, Group 또는 Text Layer를 선택해주세요.
+</div>
+
+
+<button id="runButton">
+  Clean Text Layers
+</button>
+
+
+<div class="note">
+
+  <strong>화면 문구는 변경되지 않습니다.</strong><br>
+
+  Text Layer의 이름과
+  Font Family만 변경됩니다.
+
+</div>
+
+
+<script>
+
+const runButton =
+  document.getElementById(
+    "runButton"
+  );
+
+const result =
+  document.getElementById(
+    "result"
+  );
+
+
+function setLoading(loading) {
+
+  runButton.disabled =
+    loading;
+
+  runButton.textContent =
+    loading
+      ? "Cleaning..."
+      : "Clean Text Layers";
+}
+
+
+runButton.onclick =
+  () => {
+
+    setLoading(true);
+
+    result.className = "";
+
+    result.textContent =
+      "Text Layer를 정리하고 있습니다...";
+
+    parent.postMessage(
+      {
+        pluginMessage: {
+          type: "run"
+        }
+      },
+      "*"
+    );
+  };
+
+
+onmessage =
+  event => {
+
+    const msg =
+      event.data.pluginMessage;
+
+    if (!msg) {
+      return;
+    }
+
+
+    if (msg.type === "processing") {
+
+      setLoading(true);
+
+      return;
+    }
+
+
+    if (msg.type === "error") {
+
+      setLoading(false);
+
+      result.className =
+        "error";
+
+      result.textContent =
+        msg.message;
+
+      return;
+    }
+
+
+    if (msg.type === "complete") {
+
+      setLoading(false);
+
+      const s =
+        msg.stats;
+
+      result.className =
+        "success";
+
+      result.textContent =
+`Cleanup Complete
+
+Text Layer
+${s.total}
+
+Font → Inter
+${s.interConverted}
+
+Inter Segments
+${s.interSegments}
+
+LID Protected
+${s.lidProtected}
+
+Layer Name → "-"
+${s.renamedToHyphen}
+
+Font Failed
+${s.fontFailed}
+
+Rename Failed
+${s.renameFailed}`;
+
+    }
+  };
+
+</script>
+
+</body>
+</html>
